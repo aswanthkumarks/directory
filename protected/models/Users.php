@@ -109,4 +109,15 @@ class Users extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	public function get_usertype($typ){
+		$usertype='';
+		switch($typ){
+			case '0':$usertype="SuperAdmin"; break;
+			case '1':$usertype="Admin"; break;
+			case '2':$usertype="User"; break;
+					
+		}
+		return $usertype;
+	}
 }

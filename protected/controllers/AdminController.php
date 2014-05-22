@@ -212,9 +212,13 @@ class AdminController extends Controller
 	}
 	public function actionUsers(){
 		$model=new Users();
-
+		
+		if(isset($_GET['p']) && $_GET['p']='edit'){
+			
+		}
+		
 		$criteria=new CDbCriteria(array(
-				'order'=>'id ASC',
+				'order'=>'uid ASC',
 		));
 		
 		$dataProvider=new CActiveDataProvider('Users',array(

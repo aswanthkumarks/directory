@@ -1,15 +1,18 @@
 <?php
+
+
+
+
 $this->widget('zii.widgets.grid.CGridView', array(
 		'dataProvider'=>$dataProvider,
 		'columns'=>array(
-
 				array(
 						'header'=>'Sl No.',
 						'value'=>'$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
 				),
 				array(
 						'header'=>'Name',
-						'value'=>'$data->first_name $data->last_name',
+						'value'=>'$data->first_name." ". $data->last_name',
 				),
 				array(
 						'header'=>'Email',
@@ -17,7 +20,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				),
 				array(
 						'header'=>'User Type',
-						'value'=>'$data->user_type',
+						'value'=> '$data->get_usertype($data->user_type)',
 				),
 				array(
 						'class'=>'CButtonColumn',
