@@ -213,10 +213,39 @@ class AdminController extends Controller
 	public function actionUsers(){
 		$model=new Users();
 		
-		if(isset($_GET['p']) && $_GET['p']='edit'){
+		if(isset($_GET['p'])){
+		if($_GET['p']=='edit'){
+			if(isset($_POST['Users'])){
+				$model->attributes=$_POST['Users'];
+				$usr=Users::model()->findByPk($model->uid);
+				$usr->first_name= $model->first_name;
+				
+				$usr->last_name= $model->last_name;
+				$usr->email= $model->email;
+				$usr->password= $model->password;
+				$usr->user_type= $model->user_type;
+				if($model->validate())
+				{
+				$usr->save(FALSE);
+				Yii::app()->user->setFlash('success', "User Updated!");
+				}
+				
+			}
+		}
+		elseif($_GET['p']=='newuser'){
+			if(isset($_POST['Users'])){
+				$model->attributes=$_POST['Users'];
+				if($model->validate())
+				{
+				$model->save();
+				Yii::app()->user->setFlash('success', "New User Added!");
+				}
+			}
 			
 		}
-		
+		$this->render('users',array('model'=>$model,));
+		}
+		else{		
 		$criteria=new CDbCriteria(array(
 				'order'=>'uid ASC',
 		));
@@ -229,5 +258,6 @@ class AdminController extends Controller
 		
 		$this->render('users',array('model'=>$model,
 				'dataProvider'=>$dataProvider,));
+		}
 	}
 }

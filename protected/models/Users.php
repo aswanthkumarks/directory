@@ -40,7 +40,30 @@ class Users extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('uid, first_name, last_name, email, password, user_type, verify', 'safe', 'on'=>'search'),
+			array('uid', 'safe'),
+			array('*', 'compositeUniqueKeysValidator'),
 		);
+	}
+	public function behaviors() {
+		return array(
+				'ECompositeUniqueKeyValidatable' => array(
+						'class' => 'ECompositeUniqueKeyValidatable',
+						'uniqueKeys' => array(
+								'attributes' => 'email',
+								'errorMessage' => 'This email id is already registered'
+						)
+				),
+		);
+	}
+	
+	/**
+	 * Validates composite unique keys
+	 *
+	 * Validates composite unique keys declared in the
+	 * ECompositeUniqueKeyValidatable bahavior
+	 */
+	public function compositeUniqueKeysValidator() {
+		$this->validateCompositeUniqueKeys();
 	}
 	
 	 

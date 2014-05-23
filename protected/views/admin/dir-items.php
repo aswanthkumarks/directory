@@ -5,7 +5,7 @@ if(!isset($_GET['p'])){
 $this->breadcrumbs=array(
 		'Dir Items',
 );
-echo CHtml::link('Add New Item',array('admin/dir_items','p'=>'newitem'), array('class' => 'myButton'));
+echo CHtml::link('Add New Item',array('admin/dir_items','p'=>'newitem'), array('class' => 'myButton','style'=>'float:right;'));
  
 Yii::app()->clientScript->registerScript('ajaxupdate', "
 $('#selStatus').live('change', function() {
