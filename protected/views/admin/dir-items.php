@@ -71,7 +71,9 @@ echo CHtml::dropDownList(
 /* Register new dir item */
 
 elseif($_GET['p']=='newitem'){
-
+$this->breadcrumbs=array(
+		'Dir Items'=>'dir_items','New Item',
+);
 	?>
 <div class="form">
 <?php echo CHtml::beginForm(); ?>
@@ -117,5 +119,16 @@ echo CHtml::dropDownList(
 </div><!-- form -->
 	
 	<?php 
+}
+/* Edit dir item */
+
+elseif($_GET['p']=='edit'){
+	$this->breadcrumbs=array(
+			'Dir Items'=>'dir_items','Edit Item',
+	);
+
+
+
+
 }
 ?>

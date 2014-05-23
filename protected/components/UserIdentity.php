@@ -9,6 +9,7 @@ class UserIdentity extends CUserIdentity
 {
 	private $_id;
 	private $_typ;
+	
 	/**
 	 * Authenticates a user.
 	 * The example implementation makes sure if the username and password
@@ -28,6 +29,9 @@ public function authenticate()
         {
             $this->_id=$record->uid;
             $this->_typ=$record->user_type;
+                        
+            $this->setState('fname', $record->first_name);
+            
             $this->errorCode=self::ERROR_NONE;
         }
         return !$this->errorCode;
@@ -37,8 +41,9 @@ public function authenticate()
     {
         return $this->_id;
     }
-    public function getuType()
+    public function getTyp()
     {
     	return $this->_typ;
     }
+    
 }

@@ -18,8 +18,9 @@
 							array('label'=>'Users', 'url'=>array('/admin/users')),
 							array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
 					),
-			));
+			)); 
 			?>
+			
 		</p>
 
 	</div>
