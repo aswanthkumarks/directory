@@ -13,7 +13,8 @@
  * @property string $verify
  */
 class Users extends CActiveRecord
-{
+{ 
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -29,17 +30,20 @@ class Users extends CActiveRecord
 	{
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
-		return array(
+		return array( 			
+			array('email, password', 'required'),
 			array('first_name, email, password', 'required'),
 			array('user_type', 'numerical', 'integerOnly'=>true),
 			array('first_name, last_name', 'length', 'max'=>100),
 			array('email, password', 'length', 'max'=>200),
-			array('verify', 'length', 'max'=>50),
+			array('verify', 'length', 'max'=>50), 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('uid, first_name, last_name, email, password, user_type, verify', 'safe', 'on'=>'search'),
 		);
 	}
+	
+	 
 
 	/**
 	 * @return array relational rules.
@@ -64,7 +68,7 @@ class Users extends CActiveRecord
 			'email' => 'Email',
 			'password' => 'Password',
 			'user_type' => 'User Type',
-			'verify' => 'Verify',
+			'verify' => 'Verify', 
 		);
 	}
 
@@ -120,4 +124,10 @@ class Users extends CActiveRecord
 		}
 		return $usertype;
 	}
+	
+	
+	
+	
+	
+
 }
