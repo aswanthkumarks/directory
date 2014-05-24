@@ -1,7 +1,7 @@
 <?php $this->beginContent('//layouts/admin_main'); ?>
 <div class="container">
 	<div class="span-6">
-		<p>
+		
 			<h2>Sidebar</h2>
 			<?php 
 			
@@ -21,7 +21,7 @@
 			)); 
 			?>
 			
-		</p>
+		
 
 	</div>
 	<div id="content" class="span-16">
