@@ -6,11 +6,11 @@
  * The followings are the available columns in table 'dir_matter':
  * @property integer $id
  * @property string $name
+ * @property string $degrees
  * @property string $desc
  * @property integer $dir_type
  *
  * The followings are the available model relations:
- * @property Images[] $images
  * @property Type $dirType
  * @property Singlefill[] $singlefills
  */
@@ -18,7 +18,6 @@ class Matter extends CActiveRecord
 {
 	public $typ;
 	public $search='';
-	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -38,12 +37,13 @@ class Matter extends CActiveRecord
 			array('name, dir_type', 'required'),
 			array('search', 'safe'),
 			array('dir_type', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>200),
+			array('name, degrees', 'length', 'max'=>200),
 			array('desc', 'length', 'max'=>1000),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, desc, dir_type', 'safe', 'on'=>'search'),
+			array('id, name, degrees, desc, dir_type', 'safe', 'on'=>'search'),
 		);
+		
 	}
 
 	/**
@@ -54,7 +54,6 @@ class Matter extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'images' => array(self::HAS_MANY, 'Images', 'imgof'),
 			'dirType' => array(self::BELONGS_TO, 'Type', 'dir_type'),
 			'singlefills' => array(self::HAS_MANY, 'Singlefill', 'mat_id'),
 		);
@@ -68,6 +67,7 @@ class Matter extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
+			'degrees' => 'Degrees',
 			'desc' => 'Desc',
 			'dir_type' => 'Dir Type',
 		);
@@ -93,6 +93,7 @@ class Matter extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('degrees',$this->degrees,true);
 		$criteria->compare('desc',$this->desc,true);
 		$criteria->compare('dir_type',$this->dir_type);
 
@@ -129,5 +130,4 @@ class Matter extends CActiveRecord
 				);
 		
 	}
-	
 }

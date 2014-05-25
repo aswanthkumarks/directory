@@ -1,7 +1,7 @@
 <?php $this->beginContent('//layouts/admin_main'); ?>
 <div class="container">
 	<div class="span-6">
-		<p>
+		
 			<h2>Sidebar</h2>
 			<?php 
 			
@@ -18,9 +18,10 @@
 							array('label'=>'Users', 'url'=>array('/admin/users')),
 							array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
 					),
-			));
+			)); 
 			?>
-		</p>
+			
+		
 
 	</div>
 	<div id="content" class="span-16">

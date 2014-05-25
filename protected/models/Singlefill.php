@@ -14,6 +14,7 @@
  * @property integer $status
  *
  * The followings are the available model relations:
+ * @property Images[] $images
  * @property Phone[] $phones
  * @property Matter $mat
  * @property Images $proPic
@@ -55,6 +56,7 @@ class Singlefill extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'images' => array(self::HAS_MANY, 'Images', 'imgof'),
 			'phones' => array(self::HAS_MANY, 'Phone', 'sub_fil_id'),
 			'mat' => array(self::BELONGS_TO, 'Matter', 'mat_id'),
 			'proPic' => array(self::BELONGS_TO, 'Images', 'pro_pic'),

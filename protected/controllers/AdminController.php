@@ -177,39 +177,7 @@ class AdminController extends Controller
 	
 	}
 	
-	public function actionDir_items(){
-		$model=new Matter();
-		
-		
-		if(isset($_POST['Matter'])){
-			$model->attributes=$_POST['Matter'];
-			if($model->validate())
-			{
-				$model->save();
-				Yii::app()->user->setFlash('success', "New Item Added!");
-				
-				
-			}
-		}
-		
-		
-		$criteria=new CDbCriteria(array(
-				'order'=>'id ASC',
-		));
-		
-		if(isset($_GET['cat'])){	
-			 
-			$model->search=(int) $_GET['cat'];
-			
-		}
-		$dataProvider=$model->getmaterlist();
-		
-		$this->render('dir-items',array('model'=>$model,
-				'dataProvider'=>$dataProvider,));
-		
-		
-	
-	}
+
 	public function actionUsers(){
 		$model=new Users();
 		
@@ -259,5 +227,44 @@ class AdminController extends Controller
 		$this->render('users',array('model'=>$model,
 				'dataProvider'=>$dataProvider,));
 		}
+	}
+	
+	public function actionDir_items(){
+		$model=new Matter();	
+		if(isset($_GET['p'])){
+			$model2=new Singlefill();
+			if(isset($_POST['Matter'])){
+				$model->attributes=$_POST['Matter'];
+				if($model->validate())
+				{
+					$model->save();
+					Yii::app()->user->setFlash('success', "New Item Added!");
+		
+				}
+			}
+			$this->render('dir-items',array('model'=>$model,
+					'model2'=>$model2,
+					));
+		}
+		else{
+			$criteria=new CDbCriteria(array(
+					'order'=>'id ASC',
+			));
+		
+			if(isset($_GET['cat'])){
+		
+				$model->search=(int) $_GET['cat'];
+					
+			}
+			$dataProvider=$model->getmaterlist();
+			$this->render('dir-items',array('model'=>$model,
+					'dataProvider'=>$dataProvider,));
+		}
+		
+			
+		
+	
+	
+	
 	}
 }
