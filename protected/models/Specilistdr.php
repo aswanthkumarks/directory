@@ -14,6 +14,7 @@
  */
 class Specilistdr extends CActiveRecord
 {
+	public  $name;
 	/**
 	 * @return string the associated database table name
 	 */

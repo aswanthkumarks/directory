@@ -291,6 +291,19 @@ class AdminController extends Controller
 				$model->dir_type=1;
 			}
 			
+			elseif (isset($_POST['Phone'])){
+				$phone_model=new Phone();
+				$phone_model->attributes=$_POST['Phone'];
+				if($phone_model->validate())
+				{
+					$phone_model->save();
+					Yii::app()->user->setFlash('phonesuccess','New Phone Number added');
+						
+				}
+				$model2->matfil_id=$phone_model->sub_fil_id;
+				$model->dir_type=1;
+			}
+			
 			
 			$this->render('dir-items',array('model'=>$model,
 					'model2'=>$model2,

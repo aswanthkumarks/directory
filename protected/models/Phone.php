@@ -35,8 +35,31 @@ class Phone extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('ph_id, phno, sub_fil_id', 'safe', 'on'=>'search'),
+				array('*', 'compositeUniqueKeysValidator'),
 		);
 	}
+	public function behaviors() {
+		return array(
+				'ECompositeUniqueKeyValidatable' => array(
+						'class' => 'ECompositeUniqueKeyValidatable',
+						'uniqueKeys' => array(
+								'attributes' => 'phno,sub_fil_id',
+								'errorMessage' => 'This Phone Number is already added'
+						)
+				),
+		);
+	}
+	
+	/**
+	 * Validates composite unique keys
+	 *
+	 * Validates composite unique keys declared in the
+	 * ECompositeUniqueKeyValidatable bahavior
+	 */
+	public function compositeUniqueKeysValidator() {
+		$this->validateCompositeUniqueKeys();
+	}
+	
 
 	/**
 	 * @return array relational rules.
@@ -98,5 +121,16 @@ class Phone extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function get_phonenos($uid){
+		
+		$criteria=new CDbCriteria;
+		$criteria->select=array('phno'); 
+		$criteria->addCondition('sub_fil_id = "'.$uid.'"');
+		
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'criteria'=>$criteria,)
+		);
 	}
 }

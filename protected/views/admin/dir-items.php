@@ -81,16 +81,32 @@ elseif($_GET['p']=='newitem'){
 		
 		<?php 
 		$specilistmodel=new Specilistdr();
+		$specilist_form=$this->beginWidget('CActiveForm'); 
+		echo $specilist_form->errorSummary($specilistmodel); 
+		if(Yii::app()->user->hasFlash('success')): ?>
+			<div class="flash-success">
+		        <?php echo Yii::app()->user->getFlash('success'); ?>
+		    </div>    
+		<?php endif;  
 		
+		echo $specilist_form->hiddenField($specilistmodel,'dr_id',array('value'=>$model2->matfil_id));
+		echo CHtml::activeLabel($specilistmodel,'Add Speciality'); 
+		echo $specilist_form->dropDownList($specilistmodel, 'specilist_id', 
+					CHtml::listData(Specilist::model()->findAll(), 'spid', 'sp_name'),
+					array('class'=>'span4 chosen',
+					'maxlength'=>20,
+		            'prompt' => '---Choose Speciality---',
+		            ));
+		
+		echo CHtml::submitButton('Add Speciality',array('style'=>'margin-left:20px;'));
+		$this->endWidget();
+		?>
+		<div style='width:300px;'>
+		<?php 
 		$this->widget('zii.widgets.grid.CGridView', array(
 				'dataProvider'=>$specilistmodel->get_speciality($model2->matfil_id),
 				'id'=>'specilist', 
-				'columns'=>array(
-		
-						array(
-								'header'=>'Sl No.',
-								'value'=>'$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
-						),
+				'columns'=>array( 
 						array(
 								'header'=>'Speciality',
 								'value'=>'$data->name',
@@ -110,36 +126,63 @@ elseif($_GET['p']=='newitem'){
 				),
 		));
 		
-		
-		$specilist_form=$this->beginWidget('CActiveForm'); ?>
-		<?php echo $specilist_form->errorSummary($specilistmodel); ?>
-		<?php if(Yii::app()->user->hasFlash('success')): ?>
-			<div class="flash-success">
-		        <?php echo Yii::app()->user->getFlash('success'); ?>
-		    </div>    
-		<?php endif; ?>
-		<?php 
-		
-		echo $specilist_form->hiddenField($specilistmodel,'dr_id',array('value'=>$model2->matfil_id));
-		echo CHtml::activeLabel($specilistmodel,'Add Speciality'); 
-		echo $specilist_form->dropDownList($specilistmodel, 'specilist_id', 
-					CHtml::listData(Specilist::model()->findAll(), 'spid', 'sp_name'),
-					array('class'=>'span4 chosen',
-					'maxlength'=>20,
-		            'prompt' => '---Choose Speciality---',
-		            ));
-		
-		echo CHtml::submitButton('Add Speciality',array('style'=>'margin-left:20px;'));
-		$this->endWidget();
 		?>
+		</div>
+		
 		
 		</div>
+		
 		<?php 
 		}
-		
-		
 		?>
 		
+		<div class='formbox'>
+		<h3>Phone Number</h3>
+		<?php $phone_model=new Phone();
+		$phone_form=$this->beginWidget('CActiveForm');
+		echo $phone_form->errorSummary($phone_model);
+		if(Yii::app()->user->hasFlash('phonesuccess')): ?>
+			<div class="flash-success">
+		        <?php echo Yii::app()->user->getFlash('phonesuccess'); ?>
+		    </div>    
+		<?php endif;
+		echo $phone_form->hiddenField($phone_model,'sub_fil_id',array('value'=>$model2->matfil_id));
+		echo CHtml::activeLabel($phone_model,'Add Phone Number'); 
+		echo $phone_form->textField($phone_model,'phno');		
+		echo CHtml::submitButton('Add Phone',array('style'=>'margin-left:20px;'));
+		$this->endWidget();
+		?>
+		<div style='width:300px;'>
+		<?php 
+		$this->widget('zii.widgets.grid.CGridView', array(
+				'dataProvider'=>$phone_model->get_phonenos($model2->matfil_id),
+				'id'=>'phoneno', 
+				'columns'=>array(
+					array(
+								'header'=>'Phone Number',
+								'value'=>'$data->phno',
+						),
+						array(
+								'class'=>'CButtonColumn',
+								'template'=>'{delete}',
+								'buttons'=>array
+								(
+										'update' => array
+										(
+													
+												'url'=>'$this->grid->controller->createUrl("/admin/dir_items", array("q"=>$data->primaryKey, "p"=>"delete"))',
+										),
+								),
+						),
+				),
+		));
+		
+		?>
+		</div>
+		
+		
+		
+		</div>
 				
 		</div>
 <?php 		
