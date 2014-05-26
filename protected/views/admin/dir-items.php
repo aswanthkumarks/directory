@@ -65,6 +65,87 @@ echo CHtml::activeDropDownList($model2, 'type_id',
 /* Register new dir item */
 
 elseif($_GET['p']=='newitem'){
+	if(isset($model2->matfil_id)){
+		$this->breadcrumbs=array(
+				'Dir Items'=>'dir_items','New Item','Contact Details'
+		);
+		?>
+		<div class="form">
+		
+		<?php
+
+		if($model->dir_type=='1'){
+		?>
+		<div class='formbox'>
+		<h3>Speciality</h3>
+		
+		<?php 
+		$specilistmodel=new Specilistdr();
+		
+		$this->widget('zii.widgets.grid.CGridView', array(
+				'dataProvider'=>$specilistmodel->get_speciality($model2->matfil_id),
+				'id'=>'specilist', 
+				'columns'=>array(
+		
+						array(
+								'header'=>'Sl No.',
+								'value'=>'$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
+						),
+						array(
+								'header'=>'Speciality',
+								'value'=>'$data->name',
+						),
+						array(
+								'class'=>'CButtonColumn',
+								'template'=>'{delete}',
+								'buttons'=>array
+								(
+										'update' => array
+										(
+													
+												'url'=>'$this->grid->controller->createUrl("/admin/dir_items", array("q"=>$data->primaryKey, "p"=>"delete"))',
+										),
+								),
+						),
+				),
+		));
+		
+		
+		$specilist_form=$this->beginWidget('CActiveForm'); ?>
+		<?php echo $specilist_form->errorSummary($specilistmodel); ?>
+		<?php if(Yii::app()->user->hasFlash('success')): ?>
+			<div class="flash-success">
+		        <?php echo Yii::app()->user->getFlash('success'); ?>
+		    </div>    
+		<?php endif; ?>
+		<?php 
+		
+		echo $specilist_form->hiddenField($specilistmodel,'dr_id',array('value'=>$model2->matfil_id));
+		echo CHtml::activeLabel($specilistmodel,'Add Speciality'); 
+		echo $specilist_form->dropDownList($specilistmodel, 'specilist_id', 
+					CHtml::listData(Specilist::model()->findAll(), 'spid', 'sp_name'),
+					array('class'=>'span4 chosen',
+					'maxlength'=>20,
+		            'prompt' => '---Choose Speciality---',
+		            ));
+		
+		echo CHtml::submitButton('Add Speciality',array('style'=>'margin-left:20px;'));
+		$this->endWidget();
+		?>
+		
+		</div>
+		<?php 
+		}
+		
+		
+		?>
+		
+				
+		</div>
+<?php 		
+	}
+else{
+	
 $this->breadcrumbs=array(
 		'Dir Items'=>'dir_items','New Item',
 );
@@ -83,8 +164,11 @@ $this->breadcrumbs=array(
 <tr><td colspan='2'>
 
 <?php 
-if(isset($model2->mat_id)) {
+if(isset($model2->mat_id)&&$model2->mat_id!=0) {
 echo $form->hiddenField($model,'id',array('value'=>$model2->mat_id));
+}
+if(isset($model2->matfil_id)) {
+	echo $form->hiddenField($model2,'matfil_id',array('value'=>$model2->matfil_id));
 }
 
 
@@ -158,6 +242,7 @@ echo $form->hiddenField($model,'id',array('value'=>$model2->mat_id));
 </div><!-- form -->
 	
 	<?php 
+}
 }
 /* Edit dir item */
 

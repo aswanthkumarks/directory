@@ -240,6 +240,7 @@ class AdminController extends Controller
 				$model->addedby=Yii::app()->user->id;
 				if($model->validate())
 				{
+					$itemadded=0;
 					if(isset($model->id)){
 						$newitem=Matter::model()->findByPk($model->id);
 						$newitem->name= $model->name;
@@ -248,20 +249,46 @@ class AdminController extends Controller
 						$newitem->addedby= $model->addedby;
 						$newitem->dir_type= $model->dir_type;
 						$newitem->save();
+						$itemadded=1;
 					}
 					else{
-						$model->save(false);						
+						$model->save(false);		
+						$itemadded=1;
 					}
 					$model2->mat_id= $model->id;
 						
 					
-					if($model2->validate())
+					if($model2->validate()&&$itemadded==1)
 					{
-						$model2->save();
+						if(isset($model2->matfil_id)){
+							$newfilt=Singlefill::model()->findByPk($model2->matfil_id);
+							$newfilt->matfil_id=$model2->matfil_id;
+							$newfilt->city_id=$model2->city_id;
+							$newfilt->state_id=$model2->state_id;
+							$newfilt->address=$model2->address;
+							$newfilt->pin=$model2->pin;
+							$newfilt->save();							
+						}
+						else{
+							$model2->save();
+						}
+						$model2->matfil_id;
 						Yii::app()->user->setFlash('success', "New Item Added!");
 					}
 				}
 				
+			}
+			elseif (isset($_POST['Specilistdr'])){
+				$specilistmodel=new Specilistdr();
+				$specilistmodel->attributes=$_POST['Specilistdr'];
+				if($specilistmodel->validate())
+				{
+					$specilistmodel->save();				
+					Yii::app()->user->setFlash('success','Speciality added!');
+					
+				}
+				$model2->matfil_id=$specilistmodel->dr_id;
+				$model->dir_type=1;
 			}
 			
 			

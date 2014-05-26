@@ -125,3 +125,5 @@ input[type="reset"]:active {
 }
 
 
+.formbox{ border:1px solid #DBEAF9; margin:3px; padding:5px;}
+.formbox h3{color:#1C638C;} 

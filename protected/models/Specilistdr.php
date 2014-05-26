@@ -1,33 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "dir_singlefill".
+ * This is the model class for table "dir_specilistdr".
  *
- * The followings are the available columns in table 'dir_singlefill':
- * @property integer $matfil_id
- * @property integer $mat_id
- * @property integer $city_id
- * @property integer $state_id
- * @property integer $pro_pic
- * @property string $address
- * @property string $pin
- * @property integer $status
+ * The followings are the available columns in table 'dir_specilistdr':
+ * @property integer $drspid
+ * @property integer $dr_id
+ * @property integer $specilist_id
  *
  * The followings are the available model relations:
- * @property Images[] $images
- * @property Phone[] $phones
- * @property Matter $mat
- * @property Images $proPic
- * @property State $state
+ * @property Specilist $specilist
+ * @property Singlefill $dr
  */
-class Singlefill extends CActiveRecord
+class Specilistdr extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'dir_singlefill';
+		return 'dir_specilistdr';
 	}
 
 	/**
@@ -38,16 +30,34 @@ class Singlefill extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('mat_id','safe'),
-			array('matfil_id','safe'),
-			array('city_id', 'required'),
-			array('mat_id, city_id, state_id, pro_pic, status', 'numerical', 'integerOnly'=>true),
-			array('address', 'length', 'max'=>300),
-			array('pin', 'length', 'max'=>20),
+			array('dr_id, specilist_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('matfil_id, mat_id, city_id, state_id, pro_pic, address, pin, status', 'safe', 'on'=>'search'),
+			array('drspid, dr_id, specilist_id', 'safe', 'on'=>'search'),
+			array('specilist_id', 'safe'),
+			array('*', 'compositeUniqueKeysValidator'),
 		);
+	}
+	public function behaviors() {
+		return array(
+				'ECompositeUniqueKeyValidatable' => array(
+						'class' => 'ECompositeUniqueKeyValidatable',
+						'uniqueKeys' => array(
+								'attributes' => 'dr_id, specilist_id',
+								'errorMessage' => 'This speciality is already added'
+						)
+				),
+		);
+	}
+	
+	/**
+	 * Validates composite unique keys
+	 *
+	 * Validates composite unique keys declared in the
+	 * ECompositeUniqueKeyValidatable bahavior
+	 */
+	public function compositeUniqueKeysValidator() {
+		$this->validateCompositeUniqueKeys();
 	}
 
 	/**
@@ -58,11 +68,8 @@ class Singlefill extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'images' => array(self::HAS_MANY, 'Images', 'imgof'),
-			'phones' => array(self::HAS_MANY, 'Phone', 'sub_fil_id'),
-			'mat' => array(self::BELONGS_TO, 'Matter', 'mat_id'),
-			'proPic' => array(self::BELONGS_TO, 'Images', 'pro_pic'),
-			'state' => array(self::BELONGS_TO, 'State', 'state_id'),
+			'specilist' => array(self::BELONGS_TO, 'Specilist', 'specilist_id'),
+			'dr' => array(self::BELONGS_TO, 'Singlefill', 'dr_id'),
 		);
 	}
 
@@ -72,14 +79,9 @@ class Singlefill extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'matfil_id' => 'Matfil',
-			'mat_id' => 'Mat',
-			'city_id' => 'City',
-			'state_id' => 'State',
-			'pro_pic' => 'Pro Pic',
-			'address' => 'Address',
-			'pin' => 'Pin',
-			'status' => 'Status',
+			'drspid' => 'Drspid',
+			'dr_id' => 'Dr',
+			'specilist_id' => 'Specilist',
 		);
 	}
 
@@ -101,14 +103,9 @@ class Singlefill extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('matfil_id',$this->matfil_id);
-		$criteria->compare('mat_id',$this->mat_id);
-		$criteria->compare('city_id',$this->city_id);
-		$criteria->compare('state_id',$this->state_id);
-		$criteria->compare('pro_pic',$this->pro_pic);
-		$criteria->compare('address',$this->address,true);
-		$criteria->compare('pin',$this->pin,true);
-		$criteria->compare('status',$this->status);
+		$criteria->compare('drspid',$this->drspid);
+		$criteria->compare('dr_id',$this->dr_id);
+		$criteria->compare('specilist_id',$this->specilist_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -119,10 +116,23 @@ class Singlefill extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Singlefill the static model class
+	 * @return Specilistdr the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function get_speciality($id){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('t.drspid','i.sp_name as name');
+		$criteria->join='LEFT JOIN dir_specilist i ON t.specilist_id=i.spid';
+		$criteria->addCondition('t.dr_id = "'.$id.'"');	
+		
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'criteria'=>$criteria,)
+		);
+				
 	}
 }
