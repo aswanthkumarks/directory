@@ -79,7 +79,18 @@ $this->breadcrumbs=array(
 <?php endif; ?>
 
 
-<div class="row">
+<table>
+<tr><td colspan='2'>
+
+<?php 
+if(isset($model2->mat_id)) {
+echo $form->hiddenField($model,'id',array('value'=>$model2->mat_id));
+}
+
+
+?>
+
+
    <?php echo CHtml::activeLabel($model,'Directory Type'); ?>
    <?php echo $form->dropDownList($model, 'dir_type', 
 			CHtml::listData(Type::model()->findAll(), 'type_id', 'name'),
@@ -88,33 +99,31 @@ $this->breadcrumbs=array(
             'prompt' => '---Select Directory Type---',
             ));
  ?>       
-</div>
-<div class="row">	
+</td></tr>
+<tr><td>	
 	<?php echo $form->labelEx($model,'Name'); ?>
 		<?php echo $form->textField($model,'name'); ?>
 		<?php echo $form->error($model,'name'); ?>
-</div>
-<div class="row">	
+</td><td>	
 	<?php echo $form->labelEx($model,'Degree'); ?>
 		<?php echo $form->textField($model,'degrees'); ?>
 		<?php echo $form->error($model,'degrees'); ?>
-</div>
-<div class="row">	
+</td></tr>
+<tr><td colspan='2'>	
 	<?php echo $form->labelEx($model,'Description'); ?>
-		<?php echo $form->textArea($model,'desc'); ?>
+		<?php echo $form->textArea($model,'desc',array('style'=>'width:85%;')	); ?>
 		<?php echo $form->error($model,'desc'); ?>
-</div>
-<div class="row">	
+</td></tr>
+<tr><td>	
 	<?php echo $form->labelEx($model2,'Address'); ?>
 		<?php echo $form->textArea($model2,'address'); ?>
 		<?php echo $form->error($model2,'address'); ?>
-</div>
-<div class="row">	
+</td><td>	
 	<?php echo $form->labelEx($model2,'Pin'); ?>
 		<?php echo $form->textField($model2,'pin'); ?>
 		<?php echo $form->error($model2,'pin'); ?>
-</div>
-<div class='row'>
+</td></tr>
+<tr><td>
 	<?php echo CHtml::activeLabel($model2,'Select State'); ?>
 	<?php echo $form->dropDownList($model2, 'state_id', 
 			CHtml::listData(State::model()->findAll(), 'state_id', 'state_name'),
@@ -130,9 +139,7 @@ $this->breadcrumbs=array(
 			)
             ));
  ?>
-</div>
-
-<div class='row'>
+</td><td>
 	<?php echo CHtml::activeLabel($model2,'Select City'); ?>
 	<?php echo $form->dropDownList($model2, 'city_id', 
 			CHtml::listData(City::model()->findAll(), 'city_id', 'city_name'),
@@ -141,12 +148,12 @@ $this->breadcrumbs=array(
             'prompt' => '---Select City---',
             ));
  ?>
-</div>
+</td></tr>
 
-<div class="row">
+<tr><td colspan="2">
  <?php echo CHtml::submitButton('Add Data'); ?>
-</div> 
- 
+</td></tr> 
+</table>
 <?php $this->endWidget(); ?>
 </div><!-- form -->
 	

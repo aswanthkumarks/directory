@@ -186,8 +186,7 @@ class AdminController extends Controller
 			if(isset($_POST['Users'])){
 				$model->attributes=$_POST['Users'];
 				$usr=Users::model()->findByPk($model->uid);
-				$usr->first_name= $model->first_name;
-				
+				$usr->first_name= $model->first_name;				
 				$usr->last_name= $model->last_name;
 				$usr->email= $model->email;
 				$usr->password= $model->password;
@@ -233,15 +232,39 @@ class AdminController extends Controller
 		$model=new Matter();	
 		if(isset($_GET['p'])){
 			$model2=new Singlefill();
-			if(isset($_POST['Matter'])){
+			
+			if(isset($_POST['Matter'])&&isset($_POST['Singlefill']))
+			{
 				$model->attributes=$_POST['Matter'];
+				$model2->attributes=$_POST['Singlefill'];
+				$model->addedby=Yii::app()->user->id;
 				if($model->validate())
 				{
-					$model->save();
-					Yii::app()->user->setFlash('success', "New Item Added!");
-		
+					if(isset($model->id)){
+						$newitem=Matter::model()->findByPk($model->id);
+						$newitem->name= $model->name;
+						$newitem->degrees= $model->degrees;
+						$newitem->desc= $model->desc;
+						$newitem->addedby= $model->addedby;
+						$newitem->dir_type= $model->dir_type;
+						$newitem->save();
+					}
+					else{
+						$model->save(false);						
+					}
+					$model2->mat_id= $model->id;
+						
+					
+					if($model2->validate())
+					{
+						$model2->save();
+						Yii::app()->user->setFlash('success', "New Item Added!");
+					}
 				}
+				
 			}
+			
+			
 			$this->render('dir-items',array('model'=>$model,
 					'model2'=>$model2,
 					));

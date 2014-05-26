@@ -9,9 +9,11 @@
  * @property string $degrees
  * @property string $desc
  * @property integer $dir_type
+ * @property integer $addedby
  *
  * The followings are the available model relations:
  * @property Type $dirType
+ * @property Type $UserId
  * @property Singlefill[] $singlefills
  */
 class Matter extends CActiveRecord
@@ -36,12 +38,14 @@ class Matter extends CActiveRecord
 		return array(
 			array('name, dir_type', 'required'),
 			array('search', 'safe'),
+			array('id', 'safe'),
 			array('dir_type', 'numerical', 'integerOnly'=>true),
+			array('addedby', 'numerical', 'integerOnly'=>true),
 			array('name, degrees', 'length', 'max'=>200),
 			array('desc', 'length', 'max'=>1000),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, degrees, desc, dir_type', 'safe', 'on'=>'search'),
+			array('id, name, degrees, desc, dir_type,addedby', 'safe', 'on'=>'search'),
 		);
 		
 	}
@@ -55,6 +59,7 @@ class Matter extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'dirType' => array(self::BELONGS_TO, 'Type', 'dir_type'),
+			'UserId' => array(self::BELONGS_TO, 'Users', 'addedby'),
 			'singlefills' => array(self::HAS_MANY, 'Singlefill', 'mat_id'),
 		);
 	}
@@ -70,6 +75,8 @@ class Matter extends CActiveRecord
 			'degrees' => 'Degrees',
 			'desc' => 'Desc',
 			'dir_type' => 'Dir Type',
+			'addedby' => 'Addedby',
+			
 		);
 	}
 
@@ -96,7 +103,8 @@ class Matter extends CActiveRecord
 		$criteria->compare('degrees',$this->degrees,true);
 		$criteria->compare('desc',$this->desc,true);
 		$criteria->compare('dir_type',$this->dir_type);
-
+		$criteria->compare('addedby',$this->addedby);
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

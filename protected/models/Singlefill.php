@@ -38,6 +38,7 @@ class Singlefill extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('mat_id','safe'),
 			array('city_id', 'required'),
 			array('mat_id, city_id, state_id, pro_pic, status', 'numerical', 'integerOnly'=>true),
 			array('address', 'length', 'max'=>300),
