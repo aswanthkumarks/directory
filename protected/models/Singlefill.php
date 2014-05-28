@@ -22,7 +22,7 @@
  */
 class Singlefill extends CActiveRecord
 {
-	public $dir_type;
+	public $dir_type,$name,$desc,$degrees;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -137,4 +137,15 @@ class Singlefill extends CActiveRecord
 		$sql=$this->find($criteria);
 		return $sql->dir_type;
 	}
+	
+	public function get_itemdetails($id){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.*','t.address','t.pin','t.city_id','t.state_id');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id';
+		return $this->find($criteria);
+	
+	}
+	
+	
 }

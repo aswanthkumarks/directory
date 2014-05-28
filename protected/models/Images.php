@@ -15,6 +15,8 @@
  */
 class Images extends CActiveRecord
 {
+	public $image;
+	public $matfil_id;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -32,14 +34,37 @@ class Images extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('img_url, imgof', 'required'),
+			array('img_url', 'safe'),
+			array('image', 'file', 'types'=>'jpg, gif, png'),
 			array('imgof', 'numerical', 'integerOnly'=>true),
 			array('img_url, alt', 'length', 'max'=>300),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('img_id, img_url, alt, imgof', 'safe', 'on'=>'search'),
+	array('*', 'compositeUniqueKeysValidator'),
 		);
 	}
-
+	public function behaviors() {
+		return array(
+				'ECompositeUniqueKeyValidatable' => array(
+						'class' => 'ECompositeUniqueKeyValidatable',
+						'uniqueKeys' => array(
+								'attributes' => 'img_url,imgof',
+								'errorMessage' => 'This image is already added'
+						)
+				),
+		);
+	}
+	
+	/**
+	 * Validates composite unique keys
+	 *
+	 * Validates composite unique keys declared in the
+	 * ECompositeUniqueKeyValidatable bahavior
+	 */
+	public function compositeUniqueKeysValidator() {
+		$this->validateCompositeUniqueKeys();
+	}
 	/**
 	 * @return array relational rules.
 	 */
@@ -103,5 +128,27 @@ class Images extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	public function get_images($id){
+		
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('t.img_id,t.img_url,t.alt,i.matfil_id');
+		$criteria->join='LEFT JOIN dir_singlefill i ON t.imgof=i.matfil_id';
+		$criteria->addCondition('imgof = "'.$id.'"');
+		
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'criteria'=>$criteria,)
+		);
+	}
+	
+	public function get_profile_pic($id){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('t.img_url,t.alt');		
+		$criteria->join='RIGHT JOIN dir_singlefill i ON t.img_id=i.pro_pic';
+		$criteria->addCondition('matfil_id = "'.$id.'"');
+		return $this->find($criteria);
+		 
 	}
 }

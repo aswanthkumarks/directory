@@ -36,7 +36,7 @@ class Phone extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('ph_id, phno, sub_fil_id, label', 'safe','on'=>'search'),
-				array('*', 'compositeUniqueKeysValidator'),
+			array('*', 'compositeUniqueKeysValidator'),
 		);
 	}
 	public function behaviors() {
@@ -130,7 +130,7 @@ class Phone extends CActiveRecord
 	public function get_phonenos($uid){
 		
 		$criteria=new CDbCriteria;
-		$criteria->select=array('phno,label'); 
+		$criteria->select=array('ph_id,phno,label'); 
 		$criteria->addCondition('sub_fil_id = "'.$uid.'"');
 		
 		return $dataProvider=new CActiveDataProvider($this,array(

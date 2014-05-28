@@ -51,7 +51,7 @@ echo CHtml::activeDropDownList($model2, 'type_id',
 					'update' => array
 					(
 							
-							'url'=>'$this->grid->controller->createUrl("/admin/dir_items", array("q"=>$data->primaryKey, "p"=>"edit"))',
+							'url'=>'$this->grid->controller->createUrl("/admin/dir_items", array("filt"=>$data->matfil_id, "p"=>"newitem"))',
 					),
 			),
 		),
@@ -65,23 +65,41 @@ echo CHtml::activeDropDownList($model2, 'type_id',
 /* Register new dir item */
 
 elseif($_GET['p']=='newitem'){
+	if(isset($_GET['filt'])){
+		$model2->matfil_id=$_GET['filt'];
+		$model->dir_type=$model2->get_matter_type($model2->matfil_id);;
+	}
 	if(isset($model2->matfil_id)){
 		$this->breadcrumbs=array(
 				'Dir Items'=>'dir_items','New Item','Contact Details'
 		);
 		?>
 		<div class="form">
+		<div class='formbox'>
+		<h3>Details</h3>
+		<?php 
+		$item=$model2->get_itemdetails($model2->matfil_id);
+		echo "<h2>".$item->name."<span class='desig'> (".$item->degrees.")</span>, <span class='dirtype'>".Type::model()->findByPk($item->dir_type)->name."</span></h2>";
+		echo "<p>".$item->desc."</p>";
 		
+		echo "<p>".$item->address."</p>";
+		echo "<p>".$item->pin."</p>";
+		
+		
+		echo "<p>".City::model()->findByPk($item->city_id)->city_name."</p>";
+		echo "<p>".State::model()->findByPk($item->state_id)->state_name."</p>";
+		?>
+		
+		</div>
 		<?php
-
+		
 		if(isset($model->dir_type)&&($model->dir_type=='1')){
-echo $model->dir_type."type";
+		
 		?>
 		<div class='formbox'>
 		<h3>Speciality</h3>
-		
+		<div style='float:left; width:300px;'>
 		<?php 
-		$specilistmodel=new Specilistdr();
 		$specilist_form=$this->beginWidget('CActiveForm'); 
 		echo $specilist_form->errorSummary($specilistmodel); 
 		if(Yii::app()->user->hasFlash('specilist_success')): ?>
@@ -102,7 +120,8 @@ echo $model->dir_type."type";
 		echo CHtml::submitButton('Add Speciality',array('style'=>'margin-left:20px;'));
 		$this->endWidget();
 		?>
-		<div style='width:300px;'>
+		</div>
+		<div style='width:300px; float:left;'>
 		<?php 
 		$this->widget('zii.widgets.grid.CGridView', array(
 				'dataProvider'=>$specilistmodel->get_speciality($model2->matfil_id),
@@ -117,10 +136,10 @@ echo $model->dir_type."type";
 								'template'=>'{delete}',
 								'buttons'=>array
 								(
-										'update' => array
+										'delete' => array
 										(
 													
-												'url'=>'$this->grid->controller->createUrl("/admin/dir_items", array("q"=>$data->primaryKey, "p"=>"delete"))',
+												'url'=>'$this->grid->controller->createUrl("/admin/deletespeciality", array("q"=>$data->primaryKey,))',
 										),
 								),
 						),
@@ -129,7 +148,7 @@ echo $model->dir_type."type";
 		
 		?>
 		</div>
-		
+		<div style='clear:both;'></div>
 		
 		</div>
 		
@@ -140,7 +159,7 @@ echo $model->dir_type."type";
 		<div class='formbox'>
 		<h3>Phone Number</h3>
 		<div style='float:left; width:300px;'>
-		<?php $phone_model=new Phone();
+		<?php 
 		$phone_form=$this->beginWidget('CActiveForm');
 		echo $phone_form->errorSummary($phone_model);
 		if(Yii::app()->user->hasFlash('phonesuccess')): ?>
@@ -180,10 +199,10 @@ echo $model->dir_type."type";
 								'template'=>'{delete}',
 								'buttons'=>array
 								(
-										'update' => array
+										'delete' => array
 										(
-													
-												'url'=>'$this->grid->controller->createUrl("/admin/dir_items", array("q"=>$data->primaryKey, "p"=>"delete"))',
+											'url'=>'$this->grid->controller->createUrl("/admin/deletephone", array("q"=>$data->primaryKey,))',		
+												
 										),
 								),
 						),
@@ -193,6 +212,152 @@ echo $model->dir_type."type";
 		?>
 		</div>
 		<div style='clear:both;'></div>
+		
+		
+		</div>
+		
+		<div class='formbox'>
+		<h3>Email</h3>
+		<div style='float:left; width:300px;'>
+		<?php 
+		$email_form=$this->beginWidget('CActiveForm');
+		echo $email_form->errorSummary($email_model);
+		if(Yii::app()->user->hasFlash('emailsuccess')): ?>
+			<div class="flash-success">
+		        <?php echo Yii::app()->user->getFlash('emailsuccess'); ?>
+		    </div>    
+		<?php endif;
+		echo $email_form->hiddenField($email_model,'fiter_id',array('value'=>$model2->matfil_id));
+		echo CHtml::activeLabel($email_model,'Contact Person / Label');
+		echo $email_form->textField($email_model,'email_label');
+		
+		echo CHtml::activeLabel($email_model,'Email'); 
+		echo $email_form->textField($email_model,'email');		
+		echo CHtml::submitButton('Add Email',array('style'=>'margin-left:20px;'));
+		$this->endWidget();
+		?>
+		</div>
+		<div style='width:300px; float:left;'>
+		<?php 
+		
+		
+		
+		$this->widget('zii.widgets.grid.CGridView', array(
+				'dataProvider'=>$email_model->get_emails($model2->matfil_id),
+				'id'=>'emails', 
+				'columns'=>array(
+					array(
+									'header'=>'Email Label',
+									'value'=>'$data->email_label',
+							),
+					array(
+								'header'=>'Email',
+								'value'=>'$data->email',
+						),
+						array(
+								'class'=>'CButtonColumn',
+								'template'=>'{delete}',
+								'buttons'=>array
+								(
+										'delete' => array
+										(
+													
+												'url'=>'$this->grid->controller->createUrl("/admin/deleteemail", array("q"=>$data->primaryKey,))',
+										),
+								),
+						),
+				),
+		));
+		
+		?>
+		</div>
+		<div style='clear:both;'></div>
+		
+		
+		</div>
+		
+		<div class='formbox'>
+		<h3>Images</h3>
+		 
+		<?php 
+		$image_form=$this->beginWidget('CActiveForm',
+		    array(
+		        'id' => 'Image-form',
+		        'enableAjaxValidation' => false,
+		        'htmlOptions' => array('enctype' => 'multipart/form-data'),
+		    )
+		);
+		echo $image_form->errorSummary($image_model);
+		if(Yii::app()->user->hasFlash('imagesuccess')): ?>
+			<div class="flash-success">
+		        <?php echo Yii::app()->user->getFlash('imagesuccess'); ?>
+		    </div>    
+		    
+		<?php endif; ?>
+		<div style='float:right;' class='profilepic'><h4 style='text-align:center; margin:2px;'>Profile Pic</h4>
+		<?php
+		$proimg=$image_model->get_profile_pic($model2->matfil_id);
+		
+		echo  CHtml::image(Yii::app()->request->baseUrl.'/'."$proimg->img_url",
+                                         "$proimg->alt", array("width"=>"100px" ,"height"=>"100px"))
+      ?>
+		
+		</div>
+		<?php 
+		
+		echo $image_form->hiddenField($image_model,'imgof',array('value'=>$model2->matfil_id));
+		echo CHtml::activeLabel($image_model,'alt / Caption');
+		echo $image_form->textField($image_model,'alt');
+		
+		echo $image_form->labelEx($image_model, 'image');
+		echo $image_form->fileField($image_model, 'image');
+		echo $image_form->error($image_model, 'image');
+			
+		echo CHtml::submitButton('Upload Image',array('style'=>'margin-left:20px;'));
+		$this->endWidget();
+		?> 
+		<?php 
+		
+		$baseurl=Yii::app()->getBasePath();
+		
+		$this->widget('zii.widgets.grid.CGridView', array(
+				'dataProvider'=>$image_model->get_images($model2->matfil_id),
+				'id'=>'images', 
+				'columns'=>array(
+					array(
+									'header'=>'Thumb',
+									'type'=>'html',
+									'value'=>'CHtml::image(Yii::app()->request->baseUrl."$data->img_url",
+                                         "$data->alt",
+      array("width"=>"50px" ,"height"=>"50px"))',
+							),
+					array(
+								'header'=>'Caption',
+								'value'=>'$data->alt',
+						),
+					array(
+							'header'=>'Set Profile pic',
+							'value'=>'$data->alt',
+							'type'=>'raw',
+							'value'=>'CHtml::link(CHtml::encode("Set as profile pic"), array("admin/setprofilepic" ,"q"=>$data->primaryKey ,"item"=>$data->matfil_id) )'
+					),
+						array(
+								'class'=>'CButtonColumn',
+								'template'=>'{delete}',
+								'buttons'=>array
+								(
+										'delete' => array
+										(
+													
+												'url'=>'$this->grid->controller->createUrl("/admin/deletedirpic", array("q"=>$data->primaryKey, "item"=>$data->matfil_id))',
+										),
+								),
+						),
+				),
+		));
+		
+		?>
+		 
 		
 		
 		</div>

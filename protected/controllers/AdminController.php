@@ -233,6 +233,10 @@ class AdminController extends Controller
 		if(isset($_GET['p'])){
 			$model2=new Singlefill();
 			
+			$image_model=new Images();
+			$specilistmodel=new Specilistdr();
+			$email_model=new Emails();
+			$phone_model=new Phone();
 			if(isset($_POST['Matter'])&&isset($_POST['Singlefill']))
 			{
 				$model->attributes=$_POST['Matter'];
@@ -278,8 +282,7 @@ class AdminController extends Controller
 				}
 				
 			}
-			elseif (isset($_POST['Specilistdr'])){
-				$specilistmodel=new Specilistdr();
+			elseif (isset($_POST['Specilistdr'])){				
 				$specilistmodel->attributes=$_POST['Specilistdr'];
 				if($specilistmodel->validate())
 				{
@@ -292,7 +295,7 @@ class AdminController extends Controller
 			}
 			
 			elseif(isset($_POST['Phone'])){
-				$phone_model=new Phone();
+				
 				$phone_model->attributes=$_POST['Phone'];
 				if($phone_model->validate())
 				{
@@ -304,10 +307,46 @@ class AdminController extends Controller
 				$model->dir_type=$model2->get_matter_type($model2->matfil_id);
 				
 			}
+			elseif(isset($_POST['Emails'])){				
+				$email_model->attributes=$_POST['Emails'];
+				if($email_model->validate())
+				{
+					$email_model->save();
+					Yii::app()->user->setFlash('emailsuccess','New email address added');
+			
+				}
+				$model2->matfil_id=$email_model->fiter_id;
+				$model->dir_type=$model2->get_matter_type($model2->matfil_id);
+			
+			}
+			elseif(isset($_POST['Images'])){
+				
+				$image_model->attributes=$_POST['Images'];
+				echo $image_model->image=CUploadedFile::getInstance($image_model,'image');
+				echo $folder=Yii::getPathOfAlias('webroot').DIRECTORY_SEPARATOR."images".DIRECTORY_SEPARATOR;
+				
+				if(!is_dir($folder.$image_model->imgof)){
+					mkdir($folder.$image_model->imgof);
+				}
+				$folder=$folder.$image_model->imgof."/";
+				$image_model->img_url="/images/".$image_model->imgof."/".$image_model->image;
+				
+				if($image_model->validate())
+				{
+					$image_model->save();
+					$path = $folder.$image_model->image;
+					$image_model->image->saveAs($path); 
+					Yii::app()->user->setFlash('imagesuccess','New Image Uploded');
+				}
+			}
 			
 			
 			$this->render('dir-items',array('model'=>$model,
 					'model2'=>$model2,
+					'image_model'=>$image_model,
+					'specilistmodel'=>$specilistmodel,
+					'email_model'=>$email_model,
+					'phone_model'=>$phone_model,
 					));
 		}
 		else{
@@ -331,4 +370,37 @@ class AdminController extends Controller
 	
 	
 	}
+	
+	public function actionSetprofilepic(){
+		if(isset($_GET['q'])&&isset($_GET['item'])){
+			
+			$profile=Singlefill::model()->findByPk($_GET['item']);
+			$profile->pro_pic=$_GET['q'];
+			$profile->save();
+		}
+		$url = Yii::app()->createUrl('admin/dir_items',array( 'filt' => $_GET['item'], 'p'=>'newitem'));
+		$this->redirect($url);
+		
+	}
+	public function actionDeletedirpic(){
+	if(isset($_GET['q'])&&isset($_GET['item'])){
+		$pro=Singlefill::model()->findByPk($_GET['item']);
+		
+		if($pro->pro_pic==$_GET['q']){
+			$pro->pro_pic=1;
+			$pro->save();
+		}
+		Images::model()->deleteByPk($_GET['q']);
+		}
+	}
+	public function actionDeletephone(){
+		Phone::model()->deleteByPk($_GET['q']);
+	}
+	public function actionDeletespeciality(){
+		Specilistdr::model()->deleteByPk($_GET['q']);
+	}
+	public function actionDeleteemail(){
+		Emails::model()->deleteByPk($_GET['q']);
+	}
+	
 }

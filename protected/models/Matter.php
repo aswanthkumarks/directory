@@ -18,7 +18,7 @@
  */
 class Matter extends CActiveRecord
 {
-	public $typ;
+	public $typ,$matfil_id;
 	public $search='';
 	/**
 	 * @return string the associated database table name
@@ -124,8 +124,10 @@ class Matter extends CActiveRecord
 	public function getmaterlist(){
 		$criteria=new CDbCriteria;		
 		$criteria->alias='t';
-		$criteria->select=array('t.*','i.name as typ');
-		$criteria->join='LEFT JOIN dir_type i ON i.type_id=t.dir_type';
+		$criteria->select=array('t.*','i.name as typ','j.matfil_id');
+		$criteria->join='LEFT JOIN dir_type i ON i.type_id=t.dir_type RIGHT JOIN dir_singlefill j ON j.mat_id=t.id';
+		$criteria->addCondition('j.matfil_id'<>'');
+		
 		if($this->search!=''){			
 			$criteria->addCondition('t.dir_type = "'.$this->search.'"');
 		}		
@@ -138,4 +140,6 @@ class Matter extends CActiveRecord
 				);
 		
 	}
+	
+	
 }

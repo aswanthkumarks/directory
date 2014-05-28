@@ -36,9 +36,31 @@ class Emails extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('email_id, email, email_label, fiter_id', 'safe', 'on'=>'search'),
+			array('*', 'compositeUniqueKeysValidator'),
 		);
 	}
-
+	public function behaviors() {
+		return array(
+				'ECompositeUniqueKeyValidatable' => array(
+						'class' => 'ECompositeUniqueKeyValidatable',
+						'uniqueKeys' => array(
+								'attributes' => 'email,fiter_id',
+								'errorMessage' => 'This Email Id is already added'
+						)
+				),
+		);
+	}
+	
+	/**
+	 * Validates composite unique keys
+	 *
+	 * Validates composite unique keys declared in the
+	 * ECompositeUniqueKeyValidatable bahavior
+	 */
+	public function compositeUniqueKeysValidator() {
+		$this->validateCompositeUniqueKeys();
+	}
+	
 	/**
 	 * @return array relational rules.
 	 */
@@ -101,5 +123,16 @@ class Emails extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	public function get_emails($id){
+		$criteria=new CDbCriteria;
+		$criteria->select=array('email_id,email,email_label');
+		$criteria->addCondition('fiter_id = "'.$id.'"');
+		
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'criteria'=>$criteria,)
+		);
+		
+		
 	}
 }
