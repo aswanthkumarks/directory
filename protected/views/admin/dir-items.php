@@ -74,7 +74,8 @@ elseif($_GET['p']=='newitem'){
 		
 		<?php
 
-		if($model->dir_type=='1'){
+		if(isset($model->dir_type)&&($model->dir_type=='1')){
+echo $model->dir_type."type";
 		?>
 		<div class='formbox'>
 		<h3>Speciality</h3>
@@ -83,9 +84,9 @@ elseif($_GET['p']=='newitem'){
 		$specilistmodel=new Specilistdr();
 		$specilist_form=$this->beginWidget('CActiveForm'); 
 		echo $specilist_form->errorSummary($specilistmodel); 
-		if(Yii::app()->user->hasFlash('success')): ?>
+		if(Yii::app()->user->hasFlash('specilist_success')): ?>
 			<div class="flash-success">
-		        <?php echo Yii::app()->user->getFlash('success'); ?>
+		        <?php echo Yii::app()->user->getFlash('specilist_success'); ?>
 		    </div>    
 		<?php endif;  
 		
@@ -138,6 +139,7 @@ elseif($_GET['p']=='newitem'){
 		
 		<div class='formbox'>
 		<h3>Phone Number</h3>
+		<div style='float:left; width:300px;'>
 		<?php $phone_model=new Phone();
 		$phone_form=$this->beginWidget('CActiveForm');
 		echo $phone_form->errorSummary($phone_model);
@@ -147,17 +149,28 @@ elseif($_GET['p']=='newitem'){
 		    </div>    
 		<?php endif;
 		echo $phone_form->hiddenField($phone_model,'sub_fil_id',array('value'=>$model2->matfil_id));
+		echo CHtml::activeLabel($phone_model,'Contact Person / Label');
+		echo $phone_form->textField($phone_model,'label');
+		
 		echo CHtml::activeLabel($phone_model,'Add Phone Number'); 
 		echo $phone_form->textField($phone_model,'phno');		
 		echo CHtml::submitButton('Add Phone',array('style'=>'margin-left:20px;'));
 		$this->endWidget();
 		?>
-		<div style='width:300px;'>
+		</div>
+		<div style='width:300px; float:left;'>
 		<?php 
+		
+		
+		
 		$this->widget('zii.widgets.grid.CGridView', array(
 				'dataProvider'=>$phone_model->get_phonenos($model2->matfil_id),
 				'id'=>'phoneno', 
 				'columns'=>array(
+					array(
+									'header'=>'Phone Label',
+									'value'=>'$data->label',
+							),
 					array(
 								'header'=>'Phone Number',
 								'value'=>'$data->phno',
@@ -179,7 +192,7 @@ elseif($_GET['p']=='newitem'){
 		
 		?>
 		</div>
-		
+		<div style='clear:both;'></div>
 		
 		
 		</div>

@@ -284,14 +284,14 @@ class AdminController extends Controller
 				if($specilistmodel->validate())
 				{
 					$specilistmodel->save();				
-					Yii::app()->user->setFlash('success','Speciality added!');
+					Yii::app()->user->setFlash('specilist_success','Speciality added!');
 					
 				}
 				$model2->matfil_id=$specilistmodel->dr_id;
 				$model->dir_type=1;
 			}
 			
-			elseif (isset($_POST['Phone'])){
+			elseif(isset($_POST['Phone'])){
 				$phone_model=new Phone();
 				$phone_model->attributes=$_POST['Phone'];
 				if($phone_model->validate())
@@ -301,7 +301,8 @@ class AdminController extends Controller
 						
 				}
 				$model2->matfil_id=$phone_model->sub_fil_id;
-				$model->dir_type=1;
+				$model->dir_type=$model2->get_matter_type($model2->matfil_id);
+				
 			}
 			
 			

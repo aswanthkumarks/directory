@@ -22,6 +22,7 @@
  */
 class Singlefill extends CActiveRecord
 {
+	public $dir_type;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -124,5 +125,16 @@ class Singlefill extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function get_matter_type($id){
+				
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.dir_type');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id';
+		$criteria->condition='t.matfil_id="'.$id.'"';
+		$sql=$this->find($criteria);
+		return $sql->dir_type;
 	}
 }

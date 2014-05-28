@@ -1,24 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "dir_phone".
+ * This is the model class for table "dir_emails".
  *
- * The followings are the available columns in table 'dir_phone':
- * @property integer $ph_id
- * @property string $phno
- * @property integer $sub_fil_id
- * @property string $label
+ * The followings are the available columns in table 'dir_emails':
+ * @property integer $email_id
+ * @property string $email
+ * @property string $email_label
+ * @property integer $fiter_id
+ *
  * The followings are the available model relations:
- * @property Singlefill $subFil
+ * @property Singlefill $fiter
  */
-class Phone extends CActiveRecord
+class Emails extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'dir_phone';
+		return 'dir_emails';
 	}
 
 	/**
@@ -29,38 +30,14 @@ class Phone extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('phno, sub_fil_id', 'required'),
-			array('sub_fil_id', 'numerical', 'integerOnly'=>true),
-			array('phno', 'length', 'max'=>25),
-			array('label', 'length', 'max'=>100),
+			array('email, fiter_id', 'required'),
+			array('fiter_id', 'numerical', 'integerOnly'=>true),
+			array('email, email_label', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('ph_id, phno, sub_fil_id, label', 'safe','on'=>'search'),
-				array('*', 'compositeUniqueKeysValidator'),
+			array('email_id, email, email_label, fiter_id', 'safe', 'on'=>'search'),
 		);
 	}
-	public function behaviors() {
-		return array(
-				'ECompositeUniqueKeyValidatable' => array(
-						'class' => 'ECompositeUniqueKeyValidatable',
-						'uniqueKeys' => array(
-								'attributes' => 'phno,sub_fil_id',
-								'errorMessage' => 'This Phone Number is already added'
-						)
-				),
-		);
-	}
-	
-	/**
-	 * Validates composite unique keys
-	 *
-	 * Validates composite unique keys declared in the
-	 * ECompositeUniqueKeyValidatable bahavior
-	 */
-	public function compositeUniqueKeysValidator() {
-		$this->validateCompositeUniqueKeys();
-	}
-	
 
 	/**
 	 * @return array relational rules.
@@ -70,7 +47,7 @@ class Phone extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'subFil' => array(self::BELONGS_TO, 'Singlefill', 'sub_fil_id'),
+			'fiter' => array(self::BELONGS_TO, 'Singlefill', 'fiter_id'),
 		);
 	}
 
@@ -80,11 +57,10 @@ class Phone extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'ph_id' => 'Ph',
-			'phno' => 'Phno',
-			'label' => 'label',
-			'sub_fil_id' => 'Sub Fil',
-			
+			'email_id' => 'Email',
+			'email' => 'Email',
+			'email_label' => 'Email Label',
+			'fiter_id' => 'Fiter',
 		);
 	}
 
@@ -106,11 +82,11 @@ class Phone extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('ph_id',$this->ph_id);
-		$criteria->compare('phno',$this->phno,true);
-		$criteria->compare('sub_fil_id',$this->sub_fil_id);
-		$criteria->compare('label',$this->label);
-		
+		$criteria->compare('email_id',$this->email_id);
+		$criteria->compare('email',$this->email,true);
+		$criteria->compare('email_label',$this->email_label,true);
+		$criteria->compare('fiter_id',$this->fiter_id);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -120,21 +96,10 @@ class Phone extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Phone the static model class
+	 * @return Emails the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
-	}
-	
-	public function get_phonenos($uid){
-		
-		$criteria=new CDbCriteria;
-		$criteria->select=array('phno,label'); 
-		$criteria->addCondition('sub_fil_id = "'.$uid.'"');
-		
-		return $dataProvider=new CActiveDataProvider($this,array(
-				'criteria'=>$criteria,)
-		);
 	}
 }
