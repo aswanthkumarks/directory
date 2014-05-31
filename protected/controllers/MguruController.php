@@ -2,11 +2,7 @@
 
 class MguruController extends Controller
 {
-	
-	public function actionIndex()
-	{
-		$this->render('index');
-	}
+	 
 
 	public function filters()
 	{
@@ -30,6 +26,15 @@ class MguruController extends Controller
 						'users'=>array('*'),
 				),
 		);
+	}
+	
+	/**
+	 * This is the default 'index' action that is invoked
+	 * when an action is not explicitly requested by users.
+	 */
+	public function actionIndex()
+	{ 
+		$this->render('states');
 	}
 	
 	public function actionDynamiccities()

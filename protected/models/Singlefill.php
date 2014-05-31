@@ -22,7 +22,7 @@
  */
 class Singlefill extends CActiveRecord
 {
-	public $dir_type,$name,$desc,$degrees;
+	public $dir_type,$name,$dir,$desc,$degrees,$img_url,$city_name,$state_name;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -145,6 +145,39 @@ class Singlefill extends CActiveRecord
 		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id';
 		return $this->find($criteria);
 	
+	}
+	
+	public function list_items(){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.*','d.name as dir','t.matfil_id','c.city_name','s.state_name','im.img_url');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id 
+				LEFT JOIN dir_images im ON t.pro_pic=im.img_id
+				LEFT JOIN dir_state s ON t.state_id=s.state_id
+				LEFT JOIN dir_city c ON t.city_id=c.city_id
+				RIGHT JOIN dir_type d ON i.dir_type=d.type_id';
+		
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'pagination'=>array(
+						'pageSize'=>10,
+				),
+				'criteria'=>$criteria,)
+		);
+	}
+	
+	
+	public function get_profile_details($id){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.name,i.degrees,i.desc','d.name as dir','c.city_name','s.state_name','im.img_url');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id
+				LEFT JOIN dir_images im ON t.pro_pic=im.img_id
+				LEFT JOIN dir_state s ON t.state_id=s.state_id
+				LEFT JOIN dir_city c ON t.city_id=c.city_id
+				RIGHT JOIN dir_type d ON i.dir_type=d.type_id';
+		$criteria->condition='t.matfil_id="'.$id.'"';
+		return $this->find($criteria);
+		
 	}
 	
 	
