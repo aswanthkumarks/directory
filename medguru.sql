@@ -289,6 +289,27 @@ INSERT INTO `dir_country` (`id`, `name`, `iso`, `phonecode`) VALUES
 /*!40000 ALTER TABLE `dir_country` ENABLE KEYS */;
 
 
+-- Dumping structure for table medeguru_db.dir_emails
+CREATE TABLE IF NOT EXISTS `dir_emails` (
+  `email_id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(200) NOT NULL,
+  `email_label` varchar(200) DEFAULT NULL,
+  `fiter_id` int(11) NOT NULL,
+  PRIMARY KEY (`email_id`),
+  UNIQUE KEY `email` (`email`,`fiter_id`),
+  KEY `filter` (`fiter_id`),
+  CONSTRAINT `filter` FOREIGN KEY (`fiter_id`) REFERENCES `dir_singlefill` (`matfil_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+-- Dumping data for table medeguru_db.dir_emails: ~1 rows (approximately)
+DELETE FROM `dir_emails`;
+/*!40000 ALTER TABLE `dir_emails` DISABLE KEYS */;
+INSERT INTO `dir_emails` (`email_id`, `email`, `email_label`, `fiter_id`) VALUES
+	(1, 'aswa@live.com', 'aswantjh', 17),
+	(4, 'aswa@live.com', 'test', 13);
+/*!40000 ALTER TABLE `dir_emails` ENABLE KEYS */;
+
+
 -- Dumping structure for table medeguru_db.dir_images
 CREATE TABLE IF NOT EXISTS `dir_images` (
   `img_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -296,13 +317,17 @@ CREATE TABLE IF NOT EXISTS `dir_images` (
   `alt` varchar(300) DEFAULT NULL,
   `imgof` int(11) NOT NULL,
   PRIMARY KEY (`img_id`),
+  UNIQUE KEY `img_url` (`img_url`,`imgof`),
   KEY `imgref` (`imgof`),
-  CONSTRAINT `imgref` FOREIGN KEY (`imgof`) REFERENCES `dir_singlefill` (`matfil_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CONSTRAINT `imgref` FOREIGN KEY (`imgof`) REFERENCES `dir_matter` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
--- Dumping data for table medeguru_db.dir_images: ~0 rows (approximately)
+-- Dumping data for table medeguru_db.dir_images: ~1 rows (approximately)
 DELETE FROM `dir_images`;
 /*!40000 ALTER TABLE `dir_images` DISABLE KEYS */;
+INSERT INTO `dir_images` (`img_id`, `img_url`, `alt`, `imgof`) VALUES
+	(1, 'images/default.jpg', 'default', 1),
+	(2, '/images/default.jpg', 'test', 13);
 /*!40000 ALTER TABLE `dir_images` ENABLE KEYS */;
 
 
@@ -310,20 +335,39 @@ DELETE FROM `dir_images`;
 CREATE TABLE IF NOT EXISTS `dir_matter` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
+  `degrees` varchar(200) DEFAULT NULL,
   `desc` varchar(1000) DEFAULT NULL,
+  `addedby` int(11) NOT NULL,
   `dir_type` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `type` (`dir_type`),
-  CONSTRAINT `type` FOREIGN KEY (`dir_type`) REFERENCES `dir_type` (`type_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  KEY `userid` (`addedby`),
+  CONSTRAINT `type` FOREIGN KEY (`dir_type`) REFERENCES `dir_type` (`type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userid` FOREIGN KEY (`addedby`) REFERENCES `dir_users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 
--- Dumping data for table medeguru_db.dir_matter: ~3 rows (approximately)
+-- Dumping data for table medeguru_db.dir_matter: ~18 rows (approximately)
 DELETE FROM `dir_matter`;
 /*!40000 ALTER TABLE `dir_matter` DISABLE KEYS */;
-INSERT INTO `dir_matter` (`id`, `name`, `desc`, `dir_type`) VALUES
-	(1, 'aswa', 'asas', 1),
-	(2, 'Aswanth', 'Karuvelil', 1),
-	(3, 'Subash', 'Chalakudi', 2);
+INSERT INTO `dir_matter` (`id`, `name`, `degrees`, `desc`, `addedby`, `dir_type`) VALUES
+	(1, 'Aswanth', '', '', 1, 1),
+	(9, 'Aswanth', '', '', 1, 1),
+	(10, 'Aswanth', '', '', 1, 1),
+	(11, 'Aswanth', '', '', 1, 1),
+	(12, 'Aswanth', '', '', 1, 1),
+	(13, 'Aswanth', 'Btech', 'situated in infopark', 1, 1),
+	(14, 'Aswanth', 'btech', 'test', 1, 1),
+	(15, 'Krishnakumar', 'Btech', 'Test engg', 1, 2),
+	(16, 'Aswanth', 'btech', 'test', 1, 1),
+	(17, 'Aswanth', 'btech', 'test', 1, 1),
+	(18, 'Aswanth', 'btech', 'test', 1, 1),
+	(19, 'Aswanth', 'btech', 'test', 1, 1),
+	(20, 'Aswanth', 'btech', 'test', 1, 1),
+	(21, 'Aswanth', 'btech', 'test', 1, 1),
+	(22, 'Aswanth', 'btech', 'test', 1, 1),
+	(23, 'Aswanth', 'btech', 'test', 1, 1),
+	(24, 'Aswanth', 'btech', 'test', 1, 1),
+	(25, 'Aswanth', 'btech', 'test', 1, 1);
 /*!40000 ALTER TABLE `dir_matter` ENABLE KEYS */;
 
 
@@ -331,15 +375,27 @@ INSERT INTO `dir_matter` (`id`, `name`, `desc`, `dir_type`) VALUES
 CREATE TABLE IF NOT EXISTS `dir_phone` (
   `ph_id` int(11) NOT NULL AUTO_INCREMENT,
   `phno` varchar(25) NOT NULL,
+  `label` varchar(100) DEFAULT NULL,
   `sub_fil_id` int(11) NOT NULL,
   PRIMARY KEY (`ph_id`),
+  UNIQUE KEY `phno_unique` (`phno`,`sub_fil_id`),
   KEY `filref` (`sub_fil_id`),
   CONSTRAINT `filref` FOREIGN KEY (`sub_fil_id`) REFERENCES `dir_singlefill` (`matfil_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 
--- Dumping data for table medeguru_db.dir_phone: ~0 rows (approximately)
+-- Dumping data for table medeguru_db.dir_phone: ~8 rows (approximately)
 DELETE FROM `dir_phone`;
 /*!40000 ALTER TABLE `dir_phone` DISABLE KEYS */;
+INSERT INTO `dir_phone` (`ph_id`, `phno`, `label`, `sub_fil_id`) VALUES
+	(1, '980989', NULL, 16),
+	(3, '98989', NULL, 16),
+	(4, '4545', NULL, 16),
+	(5, '9809898', NULL, 17),
+	(6, '9809136888', NULL, 17),
+	(7, '98989', NULL, 17),
+	(8, '9898989', NULL, 17),
+	(9, '3535', 'ste', 17),
+	(11, '989898', 'Asawatnh', 13);
 /*!40000 ALTER TABLE `dir_phone` ENABLE KEYS */;
 
 
@@ -349,7 +405,7 @@ CREATE TABLE IF NOT EXISTS `dir_singlefill` (
   `mat_id` int(11) NOT NULL DEFAULT '0',
   `city_id` int(11) NOT NULL,
   `state_id` int(11) DEFAULT NULL,
-  `pro_pic` int(11) DEFAULT NULL,
+  `pro_pic` int(11) DEFAULT '1',
   `address` varchar(300) DEFAULT NULL,
   `pin` varchar(20) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
@@ -361,11 +417,27 @@ CREATE TABLE IF NOT EXISTS `dir_singlefill` (
   CONSTRAINT `mainsub` FOREIGN KEY (`mat_id`) REFERENCES `dir_matter` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `propic` FOREIGN KEY (`pro_pic`) REFERENCES `dir_images` (`img_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `state` FOREIGN KEY (`state_id`) REFERENCES `dir_state` (`state_id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=latin1;
 
--- Dumping data for table medeguru_db.dir_singlefill: ~0 rows (approximately)
+-- Dumping data for table medeguru_db.dir_singlefill: ~15 rows (approximately)
 DELETE FROM `dir_singlefill`;
 /*!40000 ALTER TABLE `dir_singlefill` DISABLE KEYS */;
+INSERT INTO `dir_singlefill` (`matfil_id`, `mat_id`, `city_id`, `state_id`, `pro_pic`, `address`, `pin`, `status`) VALUES
+	(13, 13, 1, 3, 1, 'ashokam', '683580', 0),
+	(14, 14, 1, 3, 1, 'test', '683522', 0),
+	(15, 14, 1, 3, 1, 'test', '683522', 0),
+	(16, 14, 1, 3, 1, 'test', '683522', 0),
+	(17, 15, 2, 3, 1, 'address', '6835850', 0),
+	(18, 16, 1, 3, 1, 'test adderss', '6856865', 0),
+	(19, 17, 1, 3, 1, 'test adderss', '6856865', 0),
+	(20, 18, 1, 3, 1, 'test adderss', '6856865', 0),
+	(21, 19, 1, 3, 1, 'test adderss', '6856865', 0),
+	(22, 20, 1, 3, 1, 'test adderss', '6856865', 0),
+	(23, 21, 1, 3, 1, 'test adderss', '6856865', 0),
+	(24, 22, 1, 3, 1, 'test adderss', '6856865', 0),
+	(25, 23, 1, 3, 1, 'test adderss', '6856865', 0),
+	(26, 24, 1, 3, 1, 'test adderss', '6856865', 0),
+	(27, 25, 1, 3, 1, 'test adderss', '6856865', 0);
 /*!40000 ALTER TABLE `dir_singlefill` ENABLE KEYS */;
 
 
@@ -375,14 +447,38 @@ CREATE TABLE IF NOT EXISTS `dir_specilist` (
   `sp_name` varchar(200) NOT NULL,
   PRIMARY KEY (`spid`),
   UNIQUE KEY `sp_name` (`sp_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
--- Dumping data for table medeguru_db.dir_specilist: ~1 rows (approximately)
+-- Dumping data for table medeguru_db.dir_specilist: ~3 rows (approximately)
 DELETE FROM `dir_specilist`;
 /*!40000 ALTER TABLE `dir_specilist` DISABLE KEYS */;
 INSERT INTO `dir_specilist` (`spid`, `sp_name`) VALUES
-	(1, 'Eye');
+	(2, 'Ent'),
+	(1, 'Eye'),
+	(3, 'Heart');
 /*!40000 ALTER TABLE `dir_specilist` ENABLE KEYS */;
+
+
+-- Dumping structure for table medeguru_db.dir_specilistdr
+CREATE TABLE IF NOT EXISTS `dir_specilistdr` (
+  `drspid` int(11) NOT NULL AUTO_INCREMENT,
+  `dr_id` int(11) NOT NULL,
+  `specilist_id` int(11) NOT NULL,
+  PRIMARY KEY (`drspid`),
+  UNIQUE KEY `specilist` (`dr_id`,`specilist_id`),
+  KEY `FK_dir_specilistdr_dir_specilist` (`specilist_id`),
+  CONSTRAINT `FK_dir_specilistdr_dir_singlefill` FOREIGN KEY (`dr_id`) REFERENCES `dir_singlefill` (`matfil_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_dir_specilistdr_dir_specilist` FOREIGN KEY (`specilist_id`) REFERENCES `dir_specilist` (`spid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+-- Dumping data for table medeguru_db.dir_specilistdr: ~3 rows (approximately)
+DELETE FROM `dir_specilistdr`;
+/*!40000 ALTER TABLE `dir_specilistdr` DISABLE KEYS */;
+INSERT INTO `dir_specilistdr` (`drspid`, `dr_id`, `specilist_id`) VALUES
+	(10, 13, 1),
+	(7, 16, 1),
+	(8, 16, 2);
+/*!40000 ALTER TABLE `dir_specilistdr` ENABLE KEYS */;
 
 
 -- Dumping structure for table medeguru_db.dir_state
@@ -432,13 +528,14 @@ CREATE TABLE IF NOT EXISTS `dir_users` (
   `verify` varchar(50) NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
--- Dumping data for table medeguru_db.dir_users: ~0 rows (approximately)
+-- Dumping data for table medeguru_db.dir_users: ~2 rows (approximately)
 DELETE FROM `dir_users`;
 /*!40000 ALTER TABLE `dir_users` DISABLE KEYS */;
 INSERT INTO `dir_users` (`uid`, `first_name`, `last_name`, `email`, `password`, `user_type`, `verify`) VALUES
-	(1, 'sample', 'user', 'sample@user.com', '98989', 0, '0');
+	(1, 'Aswanth', 'kumar', 'aswanth@bizinduce.com', 'admin', 1, '0'),
+	(2, 'Krishnakumar', 'ku', 'kri@gmail.com', 'three', 2, '0');
 /*!40000 ALTER TABLE `dir_users` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

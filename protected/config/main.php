@@ -42,10 +42,25 @@ return array(
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+				'<action:(login|logout|about|contact)>' => 'site/<action>',
+				'<id:\d+>/<title:\w+>' => 'site/profile_details',
+				
+				
+				'd/<dtype:\d+>'=>'Mguru/view',
+				'd/<dtype:\d+>/<dstate:\d+>'=>'Mguru/view',
+				'd/<dstate:\d+>/<dcity:\d+>'=>'Mguru/view',
+				
+				'd/<action:\w+>/<id:\d+>'=>'Mguru/<action>',
+				'd/<action:\w+>'=>'Mguru/<action>',
+								
+				'admin/<id:\d+>'=>'admin/view',
+				'admin/<action:\w+>/<id:\d+>'=>'admin/<action>',
+				'admin/<action:\w+>'=>'admin/<action>',
+				
+				
 			),
+			'showScriptName'=>false,
+			'caseSensitive'=>false,
 		),
 		
 		'db'=>array(

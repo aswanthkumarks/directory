@@ -22,6 +22,7 @@
  */
 class Singlefill extends CActiveRecord
 {
+	public $dir_type,$name,$dir,$desc,$degrees,$img_url,$city_name,$state_name;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -38,6 +39,8 @@ class Singlefill extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('mat_id','safe'),
+			array('matfil_id','safe'),
 			array('city_id', 'required'),
 			array('mat_id, city_id, state_id, pro_pic, status', 'numerical', 'integerOnly'=>true),
 			array('address', 'length', 'max'=>300),
@@ -123,4 +126,59 @@ class Singlefill extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	public function get_matter_type($id){
+				
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.dir_type');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id';
+		$criteria->condition='t.matfil_id="'.$id.'"';
+		$sql=$this->find($criteria);
+		return $sql->dir_type;
+	}
+	
+	public function get_itemdetails($id){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.*','t.address','t.pin','t.city_id','t.state_id');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id';
+		return $this->find($criteria);
+	
+	}
+	
+	public function list_items(){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.*','d.name as dir','t.matfil_id','c.city_name','s.state_name','im.img_url');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id 
+				LEFT JOIN dir_images im ON t.pro_pic=im.img_id
+				LEFT JOIN dir_state s ON t.state_id=s.state_id
+				LEFT JOIN dir_city c ON t.city_id=c.city_id
+				RIGHT JOIN dir_type d ON i.dir_type=d.type_id';
+		
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'pagination'=>array(
+						'pageSize'=>10,
+				),
+				'criteria'=>$criteria,)
+		);
+	}
+	
+	
+	public function get_profile_details($id){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.name,i.degrees,i.desc','d.name as dir','c.city_name','s.state_name','im.img_url');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id
+				LEFT JOIN dir_images im ON t.pro_pic=im.img_id
+				LEFT JOIN dir_state s ON t.state_id=s.state_id
+				LEFT JOIN dir_city c ON t.city_id=c.city_id
+				RIGHT JOIN dir_type d ON i.dir_type=d.type_id';
+		$criteria->condition='t.matfil_id="'.$id.'"';
+		return $this->find($criteria);
+		
+	}
+	
+	
 }

@@ -28,9 +28,10 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
+		$item=new Singlefill;
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$this->render('index');
+		$this->render('index',array('item'=>$item));
 	}
 
 	/**
@@ -107,6 +108,12 @@ class SiteController extends Controller
 		// display the login form
 		$this->render('login',array('model'=>$model));
 	}
+	
+	
+	public function actionProfile_details(){
+		$item=new Singlefill;
+		$this->render('profile',array('item'=>$item));
+	} 
 
 	/**
 	 * Logs out the current user and redirect to homepage.

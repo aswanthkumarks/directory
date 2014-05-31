@@ -1,31 +1,26 @@
 <?php
 
 /**
- * This is the model class for table "dir_matter".
+ * This is the model class for table "dir_specilistdr".
  *
- * The followings are the available columns in table 'dir_matter':
- * @property integer $id
- * @property string $name
- * @property string $degrees
- * @property string $desc
- * @property integer $dir_type
- * @property integer $addedby
+ * The followings are the available columns in table 'dir_specilistdr':
+ * @property integer $drspid
+ * @property integer $dr_id
+ * @property integer $specilist_id
  *
  * The followings are the available model relations:
- * @property Type $dirType
- * @property Type $UserId
- * @property Singlefill[] $singlefills
+ * @property Specilist $specilist
+ * @property Singlefill $dr
  */
-class Matter extends CActiveRecord
+class Specilistdr extends CActiveRecord
 {
-	public $typ,$matfil_id;
-	public $search='';
+	public  $name;
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'dir_matter';
+		return 'dir_specilistdr';
 	}
 
 	/**
@@ -36,18 +31,34 @@ class Matter extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, dir_type', 'required'),
-			array('search', 'safe'),
-			array('id', 'safe'),
-			array('dir_type', 'numerical', 'integerOnly'=>true),
-			array('addedby', 'numerical', 'integerOnly'=>true),
-			array('name, degrees', 'length', 'max'=>200),
-			array('desc', 'length', 'max'=>1000),
+			array('dr_id, specilist_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, degrees, desc, dir_type,addedby', 'safe', 'on'=>'search'),
+			array('drspid, dr_id, specilist_id', 'safe', 'on'=>'search'),
+			array('specilist_id', 'safe'),
+			array('*', 'compositeUniqueKeysValidator'),
 		);
-		
+	}
+	public function behaviors() {
+		return array(
+				'ECompositeUniqueKeyValidatable' => array(
+						'class' => 'ECompositeUniqueKeyValidatable',
+						'uniqueKeys' => array(
+								'attributes' => 'dr_id, specilist_id',
+								'errorMessage' => 'This speciality is already added'
+						)
+				),
+		);
+	}
+	
+	/**
+	 * Validates composite unique keys
+	 *
+	 * Validates composite unique keys declared in the
+	 * ECompositeUniqueKeyValidatable bahavior
+	 */
+	public function compositeUniqueKeysValidator() {
+		$this->validateCompositeUniqueKeys();
 	}
 
 	/**
@@ -58,9 +69,8 @@ class Matter extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'dirType' => array(self::BELONGS_TO, 'Type', 'dir_type'),
-			'UserId' => array(self::BELONGS_TO, 'Users', 'addedby'),
-			'singlefills' => array(self::HAS_MANY, 'Singlefill', 'mat_id'),
+			'specilist' => array(self::BELONGS_TO, 'Specilist', 'specilist_id'),
+			'dr' => array(self::BELONGS_TO, 'Singlefill', 'dr_id'),
 		);
 	}
 
@@ -70,13 +80,9 @@ class Matter extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
-			'degrees' => 'Degrees',
-			'desc' => 'Desc',
-			'dir_type' => 'Dir Type',
-			'addedby' => 'Addedby',
-			
+			'drspid' => 'Drspid',
+			'dr_id' => 'Dr',
+			'specilist_id' => 'Specilist',
 		);
 	}
 
@@ -98,13 +104,10 @@ class Matter extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('degrees',$this->degrees,true);
-		$criteria->compare('desc',$this->desc,true);
-		$criteria->compare('dir_type',$this->dir_type);
-		$criteria->compare('addedby',$this->addedby);
-		
+		$criteria->compare('drspid',$this->drspid);
+		$criteria->compare('dr_id',$this->dr_id);
+		$criteria->compare('specilist_id',$this->specilist_id);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -114,32 +117,23 @@ class Matter extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Matter the static model class
+	 * @return Specilistdr the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
 	
-	public function getmaterlist(){
-		$criteria=new CDbCriteria;		
+	public function get_speciality($id){
+		$criteria=new CDbCriteria;
 		$criteria->alias='t';
-		$criteria->select=array('t.*','i.name as typ','j.matfil_id');
-		$criteria->join='LEFT JOIN dir_type i ON i.type_id=t.dir_type RIGHT JOIN dir_singlefill j ON j.mat_id=t.id';
-		$criteria->addCondition('j.matfil_id'<>'');
-		
-		if($this->search!=''){			
-			$criteria->addCondition('t.dir_type = "'.$this->search.'"');
-		}		
+		$criteria->select=array('t.drspid','i.sp_name as name');
+		$criteria->join='LEFT JOIN dir_specilist i ON t.specilist_id=i.spid';
+		$criteria->addCondition('t.dr_id = "'.$id.'"');	
 		
 		return $dataProvider=new CActiveDataProvider($this,array(
-				'pagination'=>array(
-						'pageSize'=>20,
-				),
 				'criteria'=>$criteria,)
-				);
-		
+		);
+				
 	}
-	
-	
 }
