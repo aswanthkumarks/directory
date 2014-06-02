@@ -1,10 +1,8 @@
 <?php
 /* @var $this SiteController */
 
- 
-
 $this->widget('zii.widgets.CListView', array(
-		'dataProvider'=>$item->list_items(),
+		'dataProvider'=>$dataProvider,
 		'id'=>'matterit',
 		'ajaxUpdate' => true,
 		'itemView'=>'_home_views',

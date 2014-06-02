@@ -151,4 +151,6 @@ class Images extends CActiveRecord
 		return $this->find($criteria);
 		 
 	}
+	
+	
 }

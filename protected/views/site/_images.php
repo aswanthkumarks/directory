@@ -1,0 +1,1 @@
+<li><?php echo CHtml::image(Yii::app()->request->baseUrl.$data->img_url,$data->alt); ?></li>

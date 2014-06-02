@@ -42,14 +42,9 @@ return array(
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
-				'<action:(login|logout|about|contact)>' => 'site/<action>',
+				'<action:(login|logout|about|contact|directory)>' => 'site/<action>',
 				'<id:\d+>/<title:\w+>' => 'site/profile_details',
-				
-				
-				'd/<dtype:\d+>'=>'Mguru/view',
-				'd/<dtype:\d+>/<dstate:\d+>'=>'Mguru/view',
-				'd/<dstate:\d+>/<dcity:\d+>'=>'Mguru/view',
-				
+							
 				'd/<action:\w+>/<id:\d+>'=>'Mguru/<action>',
 				'd/<action:\w+>'=>'Mguru/<action>',
 								

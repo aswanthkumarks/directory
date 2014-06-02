@@ -121,4 +121,9 @@ class Type extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	public function list_dirs(){
+		
+		
+	}
 }

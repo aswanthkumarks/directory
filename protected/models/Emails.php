@@ -124,6 +124,7 @@ class Emails extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
 	public function get_emails($id){
 		$criteria=new CDbCriteria;
 		$criteria->select=array('email_id,email,email_label');

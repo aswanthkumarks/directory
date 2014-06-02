@@ -117,4 +117,15 @@ class City extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	public function get_cities($id){
+	$criteria=new CDbCriteria;
+	$criteria->addSearchCondition('state_id',$id);
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'pagination'=>array(
+						'pageSize'=>10,
+				),
+				'criteria'=>$criteria,)
+		);
+	}
 }

@@ -5,7 +5,7 @@ class SiteController extends Controller
 	/**
 	 * Declares class-based actions.
 	 */
-		
+	
 	public function actions()
 	{
 		return array(
@@ -28,10 +28,11 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$item=new Singlefill;
+		$dirtyp=new Type();
+		$dataProvider = new CActiveDataProvider('Type');
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$this->render('index',array('item'=>$item));
+		$this->render('index',array('dirtyp'=>$dirtyp,'dataProvider' => $dataProvider,));
 	}
 
 	/**
@@ -122,5 +123,19 @@ class SiteController extends Controller
 	{
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
+	}
+	public function geturl($str){
+		$slug = preg_replace('@[\s!:;_\?=\\\+\*/%&#]+@', '-', $str);
+		//this will replace all non alphanumeric char with '-'
+		$slug = mb_strtolower($slug);
+		//convert string to lowercase
+		return $slug = trim($slug, '-');
+	}
+	
+	public function actionDirectory(){		
+		$state=new State();
+		$city=new City();
+		
+		$this->render('directory',array('state'=>$state,'city'=>$city,));
 	}
 }

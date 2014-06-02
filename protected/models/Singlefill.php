@@ -22,7 +22,7 @@
  */
 class Singlefill extends CActiveRecord
 {
-	public $dir_type,$name,$dir,$desc,$degrees,$img_url,$city_name,$state_name;
+	public $dir_type,$name,$dir,$desc,$degrees,$img_url,$city_name,$state_name,$type_id;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -147,15 +147,17 @@ class Singlefill extends CActiveRecord
 	
 	}
 	
-	public function list_items(){
+	public function list_items($cit,$ty){
 		$criteria=new CDbCriteria;
 		$criteria->alias='t';
-		$criteria->select=array('i.*','d.name as dir','t.matfil_id','c.city_name','s.state_name','im.img_url');
-		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id 
+		$criteria->select=array('i.*','i.degrees','d.name as dir','t.matfil_id','c.city_name','s.state_name','im.img_url');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id
 				LEFT JOIN dir_images im ON t.pro_pic=im.img_id
 				LEFT JOIN dir_state s ON t.state_id=s.state_id
 				LEFT JOIN dir_city c ON t.city_id=c.city_id
 				RIGHT JOIN dir_type d ON i.dir_type=d.type_id';
+		$criteria->condition='t.status="0" and t.city_id="'.$cit.'" and i.dir_type="'.$ty.'"';
+	
 		
 		return $dataProvider=new CActiveDataProvider($this,array(
 				'pagination'=>array(
@@ -169,15 +171,37 @@ class Singlefill extends CActiveRecord
 	public function get_profile_details($id){
 		$criteria=new CDbCriteria;
 		$criteria->alias='t';
-		$criteria->select=array('i.name,i.degrees,i.desc','d.name as dir','c.city_name','s.state_name','im.img_url');
+		$criteria->select=array('i.name,i.degrees,i.desc','d.name as dir,d.type_id','c.city_name','s.state_name','im.img_url','t.address,t.pin,t.city_id');
 		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id
 				LEFT JOIN dir_images im ON t.pro_pic=im.img_id
 				LEFT JOIN dir_state s ON t.state_id=s.state_id
 				LEFT JOIN dir_city c ON t.city_id=c.city_id
 				RIGHT JOIN dir_type d ON i.dir_type=d.type_id';
 		$criteria->condition='t.matfil_id="'.$id.'"';
+		
+		
 		return $this->find($criteria);
 		
+	}
+	
+	public function list_other_items($cit,$ty,$id){
+		$criteria=new CDbCriteria;
+		$criteria->alias='t';
+		$criteria->select=array('i.*','i.degrees','d.name as dir','t.matfil_id','c.city_name','s.state_name','im.img_url');
+		$criteria->join='LEFT JOIN dir_matter i ON i.id=t.mat_id
+				LEFT JOIN dir_images im ON t.pro_pic=im.img_id
+				LEFT JOIN dir_state s ON t.state_id=s.state_id
+				LEFT JOIN dir_city c ON t.city_id=c.city_id
+				RIGHT JOIN dir_type d ON i.dir_type=d.type_id';
+		$criteria->condition='t.status="0"';
+		$criteria->condition='t.city_id="'.$cit.'" and i.dir_type="'.$ty.'" and t.matfil_id<>"'.$id.'"';
+		
+		return $dataProvider=new CActiveDataProvider($this,array(
+				'pagination'=>array(
+						'pageSize'=>10,
+				),
+				'criteria'=>$criteria,)
+		);
 	}
 	
 	
